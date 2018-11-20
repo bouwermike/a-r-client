@@ -22,15 +22,15 @@
           type="file" 
           name="asset_image" 
           @change="newFileSelected"
-          
-          
+          ref="fileInput"
+          style="display: none;"
           >
-          <!-- <button @click="$refs.fileInput.click()">Add Image</button> -->
+          <button @click="$refs.fileInput.click()">Add Image</button>
       </div>
       <div class="action-button" @click="saveAndClose">Save and Close</div>
     </div>
     <div class="list">
-      <div v-if="!this.$store.state.userAssets">
+      <div v-if="this.$store.state.userAssets.length === 0">
         <p>Loading Assets...</p>
       </div>
       <div v-else>
@@ -74,28 +74,14 @@ export default {
     },
     async saveAndClose() {
       let new_asset = await Object.assign({}, this.new_asset);
-      console.log(new_asset);
-
-      let current_asset_count = (() => {
-        if (!this.$store.state.userAssets) {
-          return 0;
-        } else {
-          return this.$store.state.userAssets.length;
-        }
-      })();
-      console.log(current_asset_count);
 
       this.$store.dispatch("createNewAsset", {
         new_asset: new_asset
       });
     }
   },
-  created() {
-    if (this.$store.state.userAssets) {
-      return null;
-    } else {
-      this.$store.dispatch("fetchAssetsFromServer");
-    }
+  mounted() {
+    this.$store.dispatch("fetchAssetsFromServer");
   }
 };
 </script>

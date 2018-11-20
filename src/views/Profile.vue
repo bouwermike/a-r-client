@@ -10,7 +10,6 @@
 <script>
 import UserProfile from "@/components/UserProfile.vue";
 import UserAssetList from "@/components/UserAssetList.vue";
-import Modal from "@/components/Modal.vue"
 
 export default {
   name: "profile",
