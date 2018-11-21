@@ -1,12 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {
-  Users,
-  Assets
-} from './mockdata.js'
-import {
-  URLS
-} from './URLS.js'
+import URLS from './URLS.js'
 import {
   format
 } from 'date-fns'

@@ -4,9 +4,7 @@ import Home from './views/Home.vue'
 import axios from 'axios'
 import store from './store.js'
 import jwt_decode from 'jwt-decode'
-import {
-  URLS
-} from './URLS'
+import URLS from './URLS'
 
 Vue.use(Router)
 

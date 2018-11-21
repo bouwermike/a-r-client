@@ -2,12 +2,23 @@
   <div class="main-container">
     <div class="left">
         <h1>Search For An Asset</h1>
-        <p>Serial Number</p>
-        <input type="text">
         <p>Category</p>
-        <input type="text">
-      
-        <button style="margin-top: 10px">Search</button>
+        <select name="" id="" v-bind="current_category">
+          <option value="mobile_devices">Mobile Devices</option>
+          <option value="laptops">Laptops</option>
+        </select>
+        <p>Serial number</p>
+        <input type="text" placeholder="search" v-model="query">
+        <div class="search-result" v-if="results.length > 0">
+          <ul v-for="asset in this.results" :key="asset._source.asset_id">
+            <li @click="selectResult">{{asset._source.asset_serial_number}}</li>
+          </ul>
+        </div>
+        
+        <div style="margin: 10px" v-show="selected_result">
+          <p>Asset Id: </p>
+          <p>Asset state: </p>
+        </div>
     </div>
     <div class="right">
       <div v-if="this.$store.state.current_user">
@@ -25,11 +36,45 @@
 </template>
 
 <script>
+import axios from "axios";
+import URLS from "@/URLS.js";
+
 export default {
   name: "home",
+  data: () => {
+    return {
+      current_category: null,
+      results: [],
+      selected_result: null,
+      query: ""
+    };
+  },
   methods: {
     toRegister() {
       this.$router.push("register");
+    },
+    search() {
+      axios
+        .get(URLS.URLS.search + "?q=" + this.query)
+        .then(response => {
+          console.log(response);
+          this.results = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    selectResult() {
+      
+    }
+  },
+  watch: {
+    query: function() {
+      if (this.query.length > 3) {
+        this.search();
+      } else if(this.query.length < 3) {
+        this.results = []
+      }
     }
   }
 };
@@ -54,6 +99,15 @@ export default {
 }
 .search-form {
   padding: 5px;
+}
+.search-result {
+  background-color: beige;
+}
+.search-result ul {
+  list-style: none;
+}
+.search-result li:hover {
+  background-color: gray;
 }
 </style>
 
