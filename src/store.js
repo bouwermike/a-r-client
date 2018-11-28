@@ -40,7 +40,7 @@ export default new Vuex.Store({
     //Fetch all assets from server for a given user_id
     async fetchAssetsFromServer(context) {
       try {
-        let result = await axios.get(URLS.assets, {
+        let result = await axios.get(URLS.URLS.assets, {
           params: {
             user_id: this.state.current_user.user_id
           },
@@ -48,9 +48,6 @@ export default new Vuex.Store({
             Authorization: window.localStorage.getItem('jwt')
           }
         })
-
-        console.log('fetchAssetsFromServer', result.data);
-
         context.commit('setUserAssets', {
           assets: result.data.data
         })
@@ -60,7 +57,7 @@ export default new Vuex.Store({
     },
     //Create a new asset for a give user_id
     async createNewAsset(context, payload) {
-      let result = await axios.post(URLS.assets, {
+      let result = await axios.post(URLS.URLS.assets, {
         new_asset: payload.new_asset,
         user_id: this.state.current_user.user_id
       }, {
@@ -81,7 +78,7 @@ export default new Vuex.Store({
     },
     //Create a new user
     async createNewUser(context, payload) {
-      let result = await axios.post(URLS.register, {
+      let result = await axios.post(URLS.URLS.register, {
         token: window.localStorage.getItem('jwt'),
         new_user: payload.new_user
       })
@@ -102,12 +99,10 @@ export default new Vuex.Store({
     async signIn(context, payload) {
       return new Promise(async (resolve, reject) => {
         try {
-          let result = await axios.post(URLS.signin, {
+          let result = await axios.post(URLS.URLS.signin, {
             token: window.localStorage.getItem('jwt'),
             signin_packet: payload.signin_packet
           })
-
-          console.log('signIn', result.data);
 
           if (result.data.auth) {
             await context.commit('setCurrentUser', {

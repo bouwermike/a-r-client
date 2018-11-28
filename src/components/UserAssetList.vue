@@ -2,10 +2,15 @@
   <div class="asset-list">
     <div class="header">
       <h1>Asset List</h1>
-      <div class="action-button" @click="showAddNew">Add New Asset</div>
+      <div v-if="!add_new_active">
+        <div class="action-button" @click="showAddNew">Add New Asset</div>
+      </div>
     </div>
     <div class="add-new" v-show="add_new_active">
-      <div class="add-new-form">
+      <div class="modal">
+        <div class="modal-content">
+          <span class="close" @click="hideAddNew">&times;</span>
+          <div class="add-new-form">
           <label for="asset_name">Asset Name</label>
           <input type="text" name="asset_name" v-model="new_asset.asset_name">
           <label for="asset_type">Asset Type</label>
@@ -28,13 +33,17 @@
           <button @click="$refs.fileInput.click()">Add Image</button>
       </div>
       <div class="action-button" @click="saveAndClose">Save and Close</div>
+        </div>
+      </div>
     </div>
     <div class="list">
       <div v-if="this.$store.state.userAssets.length === 0">
         <p>Loading Assets...</p>
       </div>
       <div v-else>
-        <AssetCard></AssetCard>
+        <div v-for="asset in this.$store.state.userAssets" :key="asset.asset_id">
+          <AssetCard :asset="asset"></AssetCard>
+        </div>
       </div>
     </div>
   </div>
@@ -64,6 +73,9 @@ export default {
     showAddNew() {
       this.add_new_active = true;
     },
+    hideAddNew() {
+      this.add_new_active = false;
+    },
     async newFileSelected(event) {
       let reader = new FileReader();
       reader.addEventListener("loadend", async () => {
@@ -78,6 +90,7 @@ export default {
       this.$store.dispatch("createNewAsset", {
         new_asset: new_asset
       });
+      this.hideAddNew();
     }
   },
   mounted() {
@@ -123,5 +136,39 @@ export default {
 .add-new-form {
   display: flex;
   flex-flow: column;
+}
+.modal {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 </style>

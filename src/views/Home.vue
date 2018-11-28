@@ -9,15 +9,22 @@
         </select>
         <p>Serial number</p>
         <input type="text" placeholder="search" v-model="query">
-        <div class="search-result" v-if="results.length > 0">
-          <ul v-for="asset in this.results" :key="asset._source.asset_id">
-            <li @click="selectResult">{{asset._source.asset_serial_number}}</li>
-          </ul>
+        <div class="search-result-container" v-if="results.length > 0">
+          <div v-for="result in this.results" :key="result._source.asset_id">
+            <div class="search-result-item" @click="selectResult(result._source)">
+              <div class="search-result-item-left">
+                  <p>{{result._source.asset_name}} </p>
+                  <p>{{result._source.asset_serial_number}}</p>
+              </div>
+              <div class="search-result-item-left">
+                  <p>{{result._source.asset_description}}</p>
+              </div>
+            </div>
+          </div>
         </div>
         
-        <div style="margin: 10px" v-show="selected_result">
-          <p>Asset Id: </p>
-          <p>Asset state: </p>
+        <div class="result-display" v-show="selected_result">
+          <AssetCard :asset="selected_result"></AssetCard>
         </div>
     </div>
     <div class="right">
@@ -36,6 +43,8 @@
 </template>
 
 <script>
+import AssetCard from '../components/AssetCard.vue'
+import LeftRightView from '../components/LeftRightView.vue'
 import axios from "axios";
 import URLS from "@/URLS.js";
 
@@ -45,9 +54,13 @@ export default {
     return {
       current_category: null,
       results: [],
-      selected_result: null,
+      selected_result: "",
       query: ""
     };
+  },
+  components: {
+    AssetCard,
+    LeftRightView
   },
   methods: {
     toRegister() {
@@ -57,23 +70,53 @@ export default {
       axios
         .get(URLS.URLS.search + "?q=" + this.query)
         .then(response => {
-          console.log(response);
           this.results = response.data;
         })
         .catch(error => {
           console.log(error);
         });
     },
-    selectResult() {
-      
+    selectResult(result) {
+      this.selected_result = result;
+      this.results = [];
+    }
+  },
+  computed: {
+    assetStatus() {
+      switch (parseInt(this.selected_result.user_asset_state)) {
+        case 0:
+          return {
+            status: "Owned",
+            style: "color:green"
+          };
+          break;
+        case 1:
+          return {
+            status: "Sold / For Sale",
+            style: "color:green"
+          };
+          break;
+        case 2:
+          return {
+            status: "STOLEN",
+            style: "color:red"
+          };
+          break;
+        default:
+          return {
+            status: "No state available",
+            style: "color:black"
+          };
+          break;
+      }
     }
   },
   watch: {
     query: function() {
       if (this.query.length > 3) {
         this.search();
-      } else if(this.query.length < 3) {
-        this.results = []
+      } else if (this.query.length < 3) {
+        this.results = [];
       }
     }
   }
@@ -88,26 +131,38 @@ export default {
   margin: 20px;
 }
 .left {
+  min-width: 50%;
   padding: 10px;
-  background-color: cornflowerblue;
+  background-color: lightgray;
   display: flex;
   flex-direction: column;
 }
 .right {
   padding: 10px;
-  background-color: burlywood;
+  background-color: beige;
 }
 .search-form {
   padding: 5px;
 }
-.search-result {
+.search-result-container {
   background-color: beige;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  text-align: center;
 }
-.search-result ul {
-  list-style: none;
+.search-result-item {
+  display: flex;
+  justify-content: space-between;
 }
-.search-result li:hover {
+.search-result-item:hover {
   background-color: gray;
+  cursor: pointer;
+}
+.result-display {
+  margin: 10px;
+  display: flex;
+  justify-content: space-between;
 }
 </style>
 

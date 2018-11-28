@@ -27,16 +27,24 @@ export default {
   },
   methods: {
     signIn() {
-      if (this.signin_packet.email.length > 0 && this.signin_packet.password.length > 0) {
-        this.$store.dispatch('signIn', {
-          signin_packet: this.signin_packet
-        }).then((result) => {
-          if(!result.data.auth) {
-            this.err_message = result.data.msg
-          } else {
-            this.$router.push('/profile')
-          }
-        })
+      if (
+        this.signin_packet.email.length > 0 &&
+        this.signin_packet.password.length > 0
+      ) {
+        this.$store
+          .dispatch("signIn", {
+            signin_packet: this.signin_packet
+          })
+          .then(result => {
+            if (!result.data.auth) {
+              this.err_message = result.data.msg;
+            } else {
+              this.$router.push("/profile");
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
       }
     }
   }
