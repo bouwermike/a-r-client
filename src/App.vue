@@ -23,7 +23,7 @@
   methods: {
     logOut() {
       this.$store.dispatch('logOut').then(() => {
-        this.$router.push('/')
+        this.$router.go()
       })
     }
   }
@@ -38,7 +38,6 @@
   color: #2c3e50;
   display: flex;
   flex-direction: column;
-  margin: 5px;
 }
 #nav {
   margin-left: 10px;
@@ -47,7 +46,6 @@
 }
 
 #nav a {
-  font-weight: bold;
   color: #2c3e50;
   text-decoration: underline;
 }

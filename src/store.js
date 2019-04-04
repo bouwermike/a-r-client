@@ -40,7 +40,7 @@ export default new Vuex.Store({
     //Fetch all assets from server for a given user_id
     async fetchAssetsFromServer(context) {
       try {
-        let result = await axios.get(URLS.assets, {
+        let result = await axios.get(URLS.URLS.assets, {
           params: {
             user_id: this.state.current_user.user_id
           },
@@ -48,9 +48,6 @@ export default new Vuex.Store({
             Authorization: window.localStorage.getItem('jwt')
           }
         })
-
-        console.log('fetchAssetsFromServer', result.data);
-
         context.commit('setUserAssets', {
           assets: result.data.data
         })
@@ -60,33 +57,54 @@ export default new Vuex.Store({
     },
     //Create a new asset for a give user_id
     async createNewAsset(context, payload) {
-      let result = await axios.post(URLS.assets, {
-        new_asset: payload.new_asset,
-        user_id: this.state.current_user.user_id
+      return new Promise(async (resolve, reject) => {
+        try {
+          let result = await axios.post(URLS.URLS.assets, {
+            new_asset: payload.new_asset,
+            user_id: this.state.current_user.user_id
+          }, {
+            headers: {
+              Authorization: window.localStorage.getItem('jwt')
+            }
+          })
+
+          if (result.status === 200) {
+            context.commit('pushNewAsset', {
+              new_asset: result.data.new_asset
+            })
+            resolve("Asset created!")
+          } else {
+            reject("something went wrong")
+          }
+        } catch (error) {
+          reject(error)
+        }
+      })
+
+    },
+    //Update an existing asset by its ID
+    async updateAsset(context, payload) {
+      console.log('store', payload.updated_asset);
+      let result = await axios.put(URLS.URLS.assets, {
+        updated_asset: payload.updated_asset
       }, {
         headers: {
           Authorization: window.localStorage.getItem('jwt')
         }
       })
 
-      console.log('createNewAsset', result.data);
+      console.log('update', result.data);
+      context.dispatch('fetchAssestsFromServer')
 
-      if (result.status === 200) {
-        context.commit('pushNewAsset', {
-          new_asset: result.data.new_asset
-        })
-      } else {
-        //HANDLE ERROR
-      }
     },
     //Create a new user
     async createNewUser(context, payload) {
-      let result = await axios.post(URLS.register, {
+      let result = await axios.post(URLS.URLS.register, {
         token: window.localStorage.getItem('jwt'),
         new_user: payload.new_user
       })
 
-      console.log('createNewUser', result.data);
+      console.log('createNewUser', result);
 
       if (result.status === 200 && result.data.user) {
         await context.commit('setCurrentUser', {
@@ -95,19 +113,19 @@ export default new Vuex.Store({
         await window.localStorage.setItem('jwt', result.data.token)
         router.push('/profile')
       } else {
-        //HANDLE ERROR  
+        console.log("Error creating the user");
+
       }
     },
     //Sign a user in with email password combo
     async signIn(context, payload) {
+      console.log(payload);
+
       return new Promise(async (resolve, reject) => {
         try {
-          let result = await axios.post(URLS.signin, {
-            token: window.localStorage.getItem('jwt'),
-            signin_packet: payload.signin_packet
+          let result = await axios.post(URLS.URLS.signin, {
+            credentials: payload.credentials
           })
-
-          console.log('signIn', result.data);
 
           if (result.data.auth) {
             await context.commit('setCurrentUser', {

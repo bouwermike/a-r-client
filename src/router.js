@@ -69,7 +69,7 @@ router.beforeEach(async (to, from, next) => {
     else if (jwt && !current_user) {
       //Clear the current_user state for certainty
       store.commit('removeCurrentUser')
-      let verified = await axios.get(URLS.verifyJWT)
+      let verified = await axios.get(URLS.URLS.verifyJWT)
 
       //If the jwt is verified, reconcile the current_user with the user stored in the jwt
       if (verified) {
@@ -90,7 +90,7 @@ router.beforeEach(async (to, from, next) => {
     } 
     //If a jwt is present, and a current_user exists in state, verify the jwt
     else if (jwt && current_user) {
-      let verified = await axios.get(URLS.verifyJWT)
+      let verified = await axios.get(URLS.URLS.verifyJWT)
 
       //If the jwt is verified, check that the jwt belongs to the current_user in state
       if (verified) {
