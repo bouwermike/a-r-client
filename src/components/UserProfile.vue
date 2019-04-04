@@ -8,7 +8,12 @@
       <p>{{this.$store.state.current_user.email}}</p>
     </div>
     <div class="right-box">
-      <img :src="this.$store.state.current_user.user_image_url" alt="user image" width=200>
+      <div v-if="!this.$store.state.current_user.user_image_url">
+        <p>Add a profile image for easier authentication at point of sale</p>
+      </div>
+      <div v-else>
+        <img :src="this.$store.state.current_user.user_image_url" alt="user image" width=200>
+      </div>
     </div>
     
   </div>

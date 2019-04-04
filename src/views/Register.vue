@@ -8,8 +8,8 @@
       <input type="text" name="last_name" v-model="new_user.last_name">
       <label for="email">Email</label>
       <input type="email" name="email" v-model="new_user.email">
-      <label for="asset_image">Profile Image</label>
-      <input 
+      <!-- <label for="asset_image">Profile Image</label> -->
+      <!-- <input 
       type="file" 
       name="asset_image" 
       @change="newFileSelected"
@@ -18,7 +18,7 @@
       >
       <div style="display: flex">
       <button @click="$refs.fileInput.click()">Add Image</button> 
-      <p v-show="img_uploaded" style="color:green">{{img_file_name}} succesfully uploaded</p></div>
+      <p v-show="img_uploaded" style="color:green">{{img_file_name}} succesfully uploaded</p></div> -->
       <div class="password-form">
         <label for="password">Password</label>
       <input type="password" name="password" v-model="new_user.password">
@@ -46,26 +46,13 @@ export default {
         first_name: "",
         last_name: "",
         email: "",
-        user_image: "",
         password: ""
       },
       conf_password: "",
       show_form_error: false,
-      img_file_name: "",
-      img_uploaded: false
     };
   },
   methods: {
-    async newFileSelected(event) {
-      let reader = new FileReader();
-      this.img_file_name = event.target.files[0].name;
-      reader.addEventListener("loadend", async () => {
-        let image_buffer = await Buffer.from(reader.result).toString("base64");
-        this.new_user.user_image = image_buffer;
-        this.img_uploaded = true;
-      });
-      reader.readAsArrayBuffer(event.target.files[0]);
-    },
     register() {
       if (
         this.new_user.first_name.length > 0 &&
